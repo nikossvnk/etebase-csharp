@@ -10,9 +10,6 @@ A C# library for Etebase
 
 **Star** and **watch** for updates.
 
-![GitHub tag](https://img.shields.io/github/tag/nikossvnk/etebase-csharp.svg)
-
-
 # Documentation
 
 The C# bindings are not yet documented, but the API is almost identical to the Python one, with the main difference being the CamelCase vs the snake case. See [etebase-py](https://github.com/nikossvnk/etebase-py) and its type stubs.
