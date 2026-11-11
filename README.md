@@ -1,20 +1,18 @@
-<p align="center">
-  <img width="120" src="https://github.com/etesync/etesync-web/blob/master/src/images/logo.svg" />
-  <h1 align="center">Etebase - Encrypt Everything</h1>
-</p>
+<h1 align="center">Etebase - Encrypt Everything</h1>
+
+> [!NOTE]
+> **This is an independent fork** of [etebase-csharp](https://github.com/etesync/etebase-csharp), the original
+> project of the EteSync authors. This fork is not affiliated with, endorsed by or supported by EteSync or
+> Etebase in any way. The history of the original project is kept as it is, with its authors, and the
+> changes of this fork follow it. Like the original, it's licensed under the [BSD-3-Clause](./LICENSE) license.
 
 A C# library for Etebase
 
 **Star** and **watch** for updates.
 
-![GitHub tag](https://img.shields.io/github/tag/etesync/etebase-csharp.svg)
-[![Build Status](https://github.com/etesync/etebase-csharp/workflows/Build/badge.svg)](https://github.com/etesync/etebase-csharp/actions/)
-[![Chat with us](https://img.shields.io/badge/chat-IRC%20|%20Matrix%20|%20Web-blue.svg)](https://www.etebase.com/community-chat/)
-
-
 # Documentation
 
-The C# bindings are not yet documented, but the API is almost identical to the Python one, with the main difference being the CamelCase vs the snake case. See the docs at https://docs.etebase.com
+The C# bindings are not yet documented, but the API is almost identical to the Python one, with the main difference being the CamelCase vs the snake case. See [etebase-py](https://github.com/nikossvnk/etebase-py) and its type stubs.
 
 # Using
 
