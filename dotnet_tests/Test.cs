@@ -14,7 +14,7 @@ namespace dotnet
             var bytes = new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
             var b64 = etebase_csharp.Utils.ToBase64(bytes);
             var bytes2 = etebase_csharp.Utils.FromBase64(b64);
-            Assert.True(bytes.SequenceEqual(bytes));
+            Assert.Equal(bytes, bytes2);
         }
     }
 }

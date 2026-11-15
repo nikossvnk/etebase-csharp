@@ -25,7 +25,8 @@ We plan on adding a NuGet package soon (help needed!), though until then, you ca
 
 ## Install deps
 
-Make sure you have `cargo` (Rust Cargo) and `dotnet` (dotnet SDK) installed and working.
+Make sure you have `cargo` (Rust Cargo) and `dotnet` (.NET SDK 10 or newer) installed and working. On Linux, the
+build also compiles OpenSSL into the library, which needs `perl` (with its core modules) and `make`.
 
 ## Build
 
@@ -37,3 +38,12 @@ dotnet build
 ```
 
 You can then copy the libraries listed in the "Using" section above.
+
+## Test
+
+After `cargo build`, from the repository's root:
+```
+dotnet test --project dotnet_tests
+```
+
+Add `-p:CargoProfile=release` to test the library from `cargo build --release`.
