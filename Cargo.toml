@@ -15,9 +15,13 @@ crate-type = ["cdylib"]
 
 [build-dependencies]
 rust_swig = { git = "https://github.com/tasn/flapigen-rs", rev = "e35c69a83895ef5ff7a2f980637ecf0f5c0bf943" }
-env_logger = "^0.7"
+env_logger = "^0.11"
 log = "^0.4.6"
 
 [dependencies]
-openssl = { version = "0.10.30", features = ["vendored"] }
-etebase = { git = "https://github.com/nikossvnk/etebase-rs", rev = "a56a3bac2c056b957cbb5d81e1f70815da66bd9a" }
+etebase = { git = "https://github.com/nikossvnk/etebase-rs", rev = "3ae5348bdf29aaa2f4733f3b88d2bb5b27d330e3" }
+
+# Builds OpenSSL into the library, so it doesn't need the system's. etebase only uses OpenSSL
+# outside Windows and Apple targets: there it uses the system's TLS.
+[target.'cfg(not(any(windows, target_vendor = "apple")))'.dependencies]
+openssl = { version = "^0.10.72", features = ["vendored"] }
