@@ -43,16 +43,11 @@ foreign_class!(class Utils {
     fn pretty_fingerprint(content: &[u8]) -> String;
 });
 
-fn get_default_server_url() -> String {
-    etebase::DEFAULT_SERVER_URL.to_owned()
-}
-
 foreign_class!(class Client {
     self_type Client;
     private constructor = empty;
     fn Client::new(client_name: &str, server_url: &str) -> Result<Client, Error>;
     fn Client::set_server_url(&mut self, server_url: &str) -> Result<(), Error>;
-    fn get_default_server_url() -> String;
 });
 
 mod User_ {
@@ -110,12 +105,16 @@ mod Account_ {
     pub fn save(this: &Account, encryption_key: Option<Vec<u8>>) -> Result<String, Error> {
         this.save(encryption_key.as_deref())
     }
+
+    pub fn is_etebase_server(client: &Client) -> Result<bool, Error> {
+        client.is_server_valid()
+    }
 }
 
 foreign_class!(class Account {
     self_type Account;
     private constructor = empty;
-    fn Account::is_etebase_server(client: &Client) -> Result<bool, Error>;
+    fn Account_::is_etebase_server(client: &Client) -> Result<bool, Error>;
     fn Account_::login(client: &Client, username: &str, password: &str) -> Result<Account, Error>;
     fn Account_::login_key(client: &Client, username: &str, main_key: Vec<u8>) -> Result<Account, Error>;
     fn Account_::signup(client: &Client, user: &User, password: &str) -> Result<Account, Error>;
@@ -530,7 +529,7 @@ impl Item {
         self.inner.lock().unwrap().uid().to_owned()
     }
 
-    pub fn to_inner(&self) -> std::sync::MutexGuard<etebase::Item> {
+    pub fn to_inner(&self) -> std::sync::MutexGuard<'_, etebase::Item> {
         self.inner.lock().unwrap()
     }
 
@@ -676,7 +675,7 @@ foreign_class!(class SignedInvitation {
     fn SignedInvitation_::username(&self) -> String; alias get_username;
     fn SignedInvitation_::collection(&self) -> String; alias get_collection;
     fn SignedInvitation::access_level(&self) -> CollectionAccessLevel; alias get_access_level;
-    fn SignedInvitation::from_pubkey(&self) -> &[u8]; alias get_from_pubkey;
+    fn SignedInvitation::sender_pubkey(&self) -> &[u8]; alias get_from_pubkey;
 });
 
 mod CollectionMember_ {

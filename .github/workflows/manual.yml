@@ -1,46 +1,60 @@
 name: Build
 
 on:
+  push:
+    branches: [master]
   pull_request:
-    branches: [ master ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
     name: Build on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, ubuntu-24.04-arm, windows-latest, macos-latest]
 
     steps:
-      - uses: actions/checkout@v2
-
-      - uses: actions-rs/toolchain@v1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          profile: minimal
+          persist-credentials: false
+
+      - uses: dtolnay/rust-toolchain@39008827e6b4319a349e9a42dfc90579dd25f1ca # stable
+        with:
           toolchain: stable
-          override: true
 
-      - name: Setup dotnet
-        uses: actions/setup-dotnet@v1
-
-      - name: Build Rust
-        run: |
-          cargo build --release
-
-      - name: Build Dotnet
-        run: |
-          cd target/dotnet-out/
-          # Try copying each dll and fail if none work
-          cp ../*/*.dylib . || cp ../*/*.so . || cp ../*/*.dll .
-          # FIXME: Also build for Linux/Mac, apparently this builds just for Windows even on Linux/Mac
-          dotnet build
-        shell: bash
-
-
-      - uses: actions/upload-artifact@v2
+      - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
         with:
-          path: |
-            ./target/dotnet-out/**/*.so
-            ./target/dotnet-out/**/*.dylib
-            ./target/dotnet-out/**/*.dll
+          dotnet-version: "10.0.x"
+
+      - name: Build the native library and generate the C# wrapper
+        run: cargo build --release
+
+      - name: Build the C# wrapper
+        working-directory: target/dotnet-out
+        run: dotnet build --configuration Release
+
+      - name: Run the tests
+        run: dotnet test --project dotnet_tests -p:CargoProfile=release
+
+      - name: Collect the libraries
+        shell: bash
+        run: |
+          mkdir dist
+          cp target/dotnet-out/bin/Release/netstandard2.0/etebase_csharp.dll dist/
+          cp target/release/*etebase_csharp_native.{so,dylib,dll} dist/ 2>/dev/null || true
+          ls dist/*etebase_csharp_native.*
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: etebase-csharp-${{ matrix.os }}
+          path: dist/
